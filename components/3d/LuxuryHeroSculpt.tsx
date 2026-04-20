@@ -69,7 +69,10 @@ function SculptMesh() {
   const geometry = useMemo(() => createSculptGeometry(), []);
 
   useEffect(() => {
-    basePositions.current = Float32Array.from(geometry.attributes.position.array as ArrayLike<number>);
+    basePositions.current = Float32Array.from(
+      geometry.attributes.position.array as ArrayLike<number>
+    );
+
     return () => {
       geometry.dispose();
     };
@@ -83,10 +86,22 @@ function SculptMesh() {
     if (!group || !mesh || !base) return;
 
     const t = state.clock.getElapsedTime();
-    const pointerX = THREE.MathUtils.damp(group.rotation.y, state.pointer.x * 0.12, 3, state.clock.getDelta());
-    const pointerZ = THREE.MathUtils.damp(group.rotation.z, state.pointer.y * 0.05, 3, state.clock.getDelta());
 
-    group.rotation.y = pointerX + Math.sin(t * 0.16) * 0.12;
+    const pointerY = THREE.MathUtils.damp(
+      group.rotation.y,
+      state.pointer.x * 0.12,
+      3,
+      state.clock.getDelta()
+    );
+
+    const pointerZ = THREE.MathUtils.damp(
+      group.rotation.z,
+      state.pointer.y * 0.05,
+      3,
+      state.clock.getDelta()
+    );
+
+    group.rotation.y = pointerY + Math.sin(t * 0.16) * 0.12;
     group.rotation.x = -0.16 + Math.cos(t * 0.14) * 0.025;
     group.rotation.z = pointerZ - 0.08;
     group.position.y = Math.sin(t * 0.32) * 0.05;
@@ -141,22 +156,31 @@ function SculptMesh() {
   );
 }
 
-export function LuxuryHeroSculpt() {
+export default function LuxuryHeroSculpt() {
   return (
     <div className="relative h-[460px] w-full overflow-hidden rounded-[2.25rem] border border-white/70 bg-[radial-gradient(circle_at_22%_18%,rgba(255,255,255,0.95),transparent_34%),radial-gradient(circle_at_70%_34%,rgba(236,205,198,0.3),transparent_30%),radial-gradient(circle_at_62%_76%,rgba(217,193,163,0.22),transparent_28%),linear-gradient(145deg,#fffefd_0%,#fcf3ef_52%,#f5e7de_100%)] shadow-[0_30px_100px_rgba(107,82,74,0.13)] md:h-[620px]">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_72%_50%,rgba(255,255,255,0.34),transparent_18%),radial-gradient(circle_at_50%_55%,rgba(255,244,239,0.58),transparent_24%),linear-gradient(180deg,rgba(255,255,255,0.16),rgba(255,255,255,0))]" />
       <div className="pointer-events-none absolute inset-y-[12%] left-[8%] w-[32%] rounded-full bg-white/40 blur-3xl" />
       <div className="pointer-events-none absolute bottom-[10%] right-[10%] h-28 w-28 rounded-full border border-white/40 bg-white/20 blur-2xl" />
 
-      <Canvas dpr={[1, 1.6]} camera={{ position: [0, 0.15, 5.4], fov: 28 }} gl={{ antialias: true, alpha: true }}>
-        <color attach="background" args={["#000000"]} />
-        <fog attach="fog" args={["#fff7f3", 7.2, 12]} />
+      <Canvas
+        dpr={[1, 1.6]}
+        camera={{ position: [0, 0.15, 5.4], fov: 28 }}
+        gl={{ antialias: true, alpha: true }}
+      >
+        <fog attach="fog" args={['#fff7f3', 7.2, 12]} />
         <Suspense fallback={null}>
           <ambientLight intensity={0.55} color="#fff3ee" />
           <directionalLight position={[3.8, 3.6, 4.5]} intensity={1.6} color="#f6ddcf" />
           <directionalLight position={[-3.5, 1.4, 2.8]} intensity={0.8} color="#fff1ea" />
           <pointLight position={[2.8, -1.8, 2.4]} intensity={0.55} color="#e9c0b3" />
-          <spotLight position={[-4, 3.5, 5]} angle={0.4} penumbra={1} intensity={1.1} color="#ffe5d8" />
+          <spotLight
+            position={[-4, 3.5, 5]}
+            angle={0.4}
+            penumbra={1}
+            intensity={1.1}
+            color="#ffe5d8"
+          />
           <SculptMesh />
           <Environment preset="studio" />
         </Suspense>
